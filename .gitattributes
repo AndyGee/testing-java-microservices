@@ -274,6 +274,3 @@ Procfile    text
 ## EXECUTABLES
 *.exe binary
 *.pyc binary
-
-## Treat asta files as binary because of line ending problems between MacOS and Windows.
-*.asta binary

@@ -1,0 +1,67 @@
+version: '3.5'
+services:
+  tjm-zookeeper:
+    image: confluentinc/cp-zookeeper:5.0.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "32181:32181"
+    volumes:
+      - tjm-zookeeper-data:/var/lib/zookeeper/data
+    restart: always
+
+  tjm-kafka:
+    image: confluentinc/cp-kafka:5.0.0
+    ports:
+      - "9092:9092"
+    depends_on:
+      - tjm-zookeeper
+    environment:
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: tjm-zookeeper:32181
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://tjm-kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - tjm-kafka-data:/var/lib/kafka/data
+    restart: always
+
+  tjm-mongodb:
+    image: mongo:3.6.14
+    hostname: tjm-mongodb
+    ports:
+      - "27717:27017"
+    volumes:
+      - tjm-mongo-data:/data/db
+
+  tjm-ftp:
+    image: stilliard/pure-ftpd:hardened
+    ports:
+      - "35035:21"
+      - "30000-30009:30000-30009"
+    volumes:
+      - tjm-ftp-data:/home/username/
+      - tjm-ftp-pw:/etc/pure-ftpd/passwd
+    environment:
+      PUBLICHOST: "localhost"
+      FTP_USER_NAME: user
+      FTP_USER_PASS: password
+      FTP_USER_HOME: /home/user
+    restart: always
+
+  dev-transcluder:
+    image: nginx:1.15.5
+    ports:
+      - 80:80
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+
+volumes:
+  tjm-zookeeper-data:
+  tjm-kafka-data:
+  tjm-mongo-data:
+  tjm-ftp-pw:
+  tjm-ftp-data:
+

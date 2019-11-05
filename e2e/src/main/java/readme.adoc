@@ -1,0 +1,3 @@
+Directory placeholder - Delete this when there is content.
+
+Test API classes should reside here, such as Page Objects etc.

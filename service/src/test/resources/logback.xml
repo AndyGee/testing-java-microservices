@@ -1,0 +1,19 @@
+<configuration scan="true" scanPeriod="30 seconds">
+    <!--appender-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="testing.microservices" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root>
+        <level value="WARN" />
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

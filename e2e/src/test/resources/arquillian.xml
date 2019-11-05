@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian
+    http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+  <extension qualifier="docker">
+    <property name="clean">false</property>
+    <property name="tlsVerify">false</property>
+    <property name="dockerContainersFile">docker-compose.yml</property> <!--2-->
+  </extension>
+
+  <extension qualifier="webdriver">
+    <property name="downloadBinaries">false</property> <!--3-->
+    <property name="browser">firefox</property> <!--4-->
+    <property name="chromePrintOptions">true</property>
+  </extension>
+
+  <extension qualifier="cubedrone">
+    <property name="browserImage">selenium/standalone-firefox-debug:3.141.59</property> <!--7-->
+    <!-- @formatter:off -->
+    <property name="cubeSpecificProperties"> <!--8-->
+    </property>
+    <!-- @formatter:on -->
+  </extension>
+
+</arquillian>

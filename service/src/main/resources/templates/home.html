@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="avblPages" type="java.util.List<testing.microservices.model.Page>"*/-->
+
+<head th:replace="fragments/head :: common_header(~{::title},~{})">
+    <title>Explore fallback landing page</title>
+</head>
+<body class="ribbon">
+<div th:replace="fragments/header :: header-default('')"></div>
+
+<div class="container">
+    <h1>Welcome</h1>
+
+    <p>This is the <strong>explore</strong> homepage during development.</p>
+
+    <h2>Example pages with supported page types</h2>
+    <ul>
+        <li th:each="page: ${avblPages}">
+            <a th:href="@{/page/{pageId}/{locale}(pageId=${page.id},locale=${#locale})}" th:text="${page.id}">@PageTitle@</a> (<span th:text="${#locale}"></span>)
+        </li>
+    </ul>
+
+</div>
+</body>
+</html>

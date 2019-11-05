@@ -1,0 +1,152 @@
+= End to End Testing (E2E)
+
+The goal of e2e tests in a web context is to emulate real user interactions with the application.
+This means having all backend and frontend collaborators up and running and then automating user actions.
+Testing should be an out of the box experience that should support at least the following:
+
+- `mvn <verify, install> -Pe2e`
+ * As running E2E tests consumes a considerable amount of time it is common to add a runtime profile.
+- IDE native run/debug
+
+
+== Behaviour Driven Development (BDD)
+
+BDD is simply a way of communicating acceptance criteria using a Ubiquitous Language (UL)
+in a so called _feature_ file.
+This feature file defines one or more test scenarios.
+
+== Docker Compose
+
+Docker compose is a recognised convention for configuring, starting and stopping multiple docker containers.
+The compose syntax is largely understood by the test framework extension _Arquillian Cube_.
+
+== Arquillian Cube
+
+Arquillian is a Red-Hat testing framework.
+Cube is an extension that understands the compose syntax and is used in tests to automate docker in the test lifecycle.
+There are a few caveats on edge cases,
+but it is unlikely this project will encounter them.
+The documentation is extensive and can be found here: http://arquillian.org/arquillian-cube
+
+The OSS project is here: https://github.com/arquillian/arquillian-cube.
+Please feel free to contribute.
+
+== Webdriver
+
+Webdriver is the Selenium framework entry point to browser automation.
+The actual test browser used by PxC is deployed as Docker container -
+This means that there are no hard dependencies required on the local machine,
+and in return we can always use the latest Selenium client.
+
+== Putting It All Together
+
+It's a little complicated, so I will try and find a logical entry.
+
+=== Define an App
+
+This simple class is to bootstrap the spring-boot application under test.
+You can set up the app in any supported spring boot test manner.
+
+.src/test/java/testing/microservices/one/App.java
+[source,java]
+----
+include::src/test/java/testing/microservices/one/App.java[tags=]
+----
+
+<1> Defines the Spring Boot application using the standard annotation
+
+
+=== Define a Test
+
+This class is an all too familiar test class, that's a good thing.
+The runtime understands the JUnit `@RunWith` annotation out of the box.
+
+[source,java]
+.src/test/java/testing/microservices/one/BDDExampleOneTest.java
+----
+include::src/test/java/testing/microservices/one/BDDExampleOneTest.java[tags=]
+----
+
+<1> Run the test using the Cucumber runner (BDD)
+<1> Points to the feature files directory
+<1> Arquillian class rule for bootstrapping the test
+<1> Arquillian method rule - Not really used, as cucumber uses the static context
+<1> Webdriver that will be connected to the browser, public so that it is available everywhere.
+
+=== Configure Arquillian
+
+The Arquillian rules need to read some configuration in order to set up the test environment.
+The magic file involved here is the test resources `arquillian.xml` file.
+
+.src/test/resources/arquillian.xml
+[source,xml]
+----
+include::src/test/resources/arquillian.xml[tags=]
+----
+
+<1> Redirect to our docker registry
+<1> The docker-compose file that should be fired up for the test environment
+<1> Because we use a container for the browser we don't need local binaries
+<1> Define the browser (container) to test against
+<1> We could provide our own docker image if required
+<1> A different extension, so override the registry for this too
+<1> Override the default (latest) image with our own stable version
+<1> Cube specific configuration, useful to poll for container ready state
+
+=== Define a Feature File
+
+This is the BDD acceptance criteria that we want to validate using tests.
+
+.src/test/resources/test-one/test.feature
+[source,cucumber]
+----
+include::src/test/resources/test-one/test.feature[tags=]
+----
+
+=== Implement the Step Definitions
+
+The steps defined in the feature file are backed by code implemented in a class
+- Literally any class, as the classpath is scanned for definitions.
+
+We can use any of our defined resources:
+
+.src/test/java/testing/microservices/one/StepsOne.java
+[source,java]
+----
+include::src/test/java/testing/microservices/one/StepsOne.java[tags=]
+----
+
+<1> Cucumber @Before hook, just like the JUnit @Before
+<1> Cucumber step interceptor for feature file definitions
+<1> Dev hack to wait until the state is changed - Great tool for development
+
+Using the simple dev hack above you can pause the test context.
+At this point the entire application and all defined collaborators are available.
+
+== Cleanup
+
+The test will cleanup the environment automatically on a clean shutdown.
+As we know, sometimes the system crashes or we break it in some way.
+If this happens then containers are likely to be dangling in the background.
+You will have to get your docker head on and do some manual cleanup.
+
+[source,shell]
+----
+cd e2e
+docker-compose down
+----
+
+This might still leave containers in a bad state,
+so check for and delete containers using the common docker commands:
+
+[source,shell]
+----
+docker ps -a
+docker container ls
+docker container stop <id>
+docker container rm <id>
+----
+
+On the CI/CD server the runner container is a throwaway,
+so cleanup is implicit.
+We should still strive to ensure that we get a clean shutdown.

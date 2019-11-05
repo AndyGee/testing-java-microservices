@@ -1,0 +1,23 @@
+version: '3'
+services:
+  e2e-zookeeper:
+    image: confluentinc/cp-zookeeper:5.0.0
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+      - ZOOKEEPER_TICK_TIME=2000
+    ports:
+      - 32181:32181
+
+  e2e-kafka:
+    image: confluentinc/cp-kafka:5.0.0
+    ports:
+      - 9092:9092
+    depends_on:
+      - e2e-zookeeper
+    environment:
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=e2e-zookeeper:32181
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://e2e-kafka:29092,EXTERNAL://172.17.0.1:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1

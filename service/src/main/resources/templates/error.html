@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body class="ribbon">
+
+<div class="container">
+  <h1>We are so sorry :(</h1>
+
+  <table>
+    <tr><td>Request URL:</td><td><span th:text="${url}">@url@</span></td></tr>
+    <tr><td>Message:</td><td><span th:text="${error}">@error@</span></td></tr>
+    <tr><td>Status Code:</td><td><span th:text="${status}">@status@</span></td></tr>
+  </table>
+</div>
+
+</body>
+
+</html>

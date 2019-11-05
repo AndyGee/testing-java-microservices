@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CucumberE2E" type="JUnit" factoryName="JUnit">
+    <module name="e2e" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="crisp.explore.one.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="testing.microservices.one" />
+    <option name="MAIN_CLASS_NAME" value="testing.microservices.one.BDDExampleOneTest" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <option name="VM_PARAMETERS" value="-ea -De2e.dev=true" />
+    <option name="PARAMETERS" value="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
