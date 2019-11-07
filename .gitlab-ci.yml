@@ -1,5 +1,6 @@
 variables:
   CI_DEBUG_TRACE: "false"
+  WANT_TO_KNOW_MORE. "https://docs.gitlab.com/ee/ci/pipelines.html"
 
 cache:
   paths:
