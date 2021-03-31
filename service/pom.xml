@@ -36,7 +36,7 @@
     <spring-kafka.version>2.2.8.RELEASE</spring-kafka.version>
     <redis-client.version>5.1.0.M1</redis-client.version>
     <jacoco-maven-plugin.version>0.7.8</jacoco-maven-plugin.version>
-    <google.guava.version>26.0-jre</google.guava.version>
+    <google.guava.version>29.0-jre</google.guava.version>
     <commons.lang3.version>3.8.1</commons.lang3.version>
   </properties>
 
